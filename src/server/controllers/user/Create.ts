@@ -10,7 +10,7 @@ interface IUser {
   email: string;
 }
 
-export const validator = validation((getSchema) => ({
+export const createValidation = validation((getSchema) => ({
   body: yup.object().shape({
     name: yup.string().required().min(3),
     age: yup.number().required().integer().min(18),
@@ -19,5 +19,5 @@ export const validator = validation((getSchema) => ({
 }));
 
 export const create = async (req: Request<{}, {}, IUser>, res: Response) => {
-  return res.send("User created successfully!");
+  return res.status(StatusCodes.CREATED).send("User created successfully!");
 };
