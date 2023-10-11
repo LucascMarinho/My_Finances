@@ -1,5 +1,5 @@
 declare module "knex/types/tables" {
   interface Tables {
-    // user: IUser
+    user: IUser;
   }
 }
