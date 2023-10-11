@@ -3,7 +3,7 @@ import * as yup from "yup";
 import { StatusCodes } from "http-status-codes";
 
 import { validation } from "../../shared/middlewares";
-import { UsersProvider } from "../../database/providers/user";
+import { TransactionsProvider } from "../../database/providers/transaction";
 
 interface IParamsProps {
   id?: number;
@@ -21,11 +21,11 @@ export const deleteById = async (req: Request<IParamsProps>, res: Response) => {
   if (!req.params.id) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       errors: {
-        default: "Couldn't found 'id' parameter",
+        default: "Couldn't find 'id' parameter",
       },
     });
   }
-  const result = await UsersProvider.deleteById(req.params.id);
+  const result = await TransactionsProvider.deleteById(req.params.id);
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       errors: {

@@ -3,14 +3,14 @@ import * as yup from "yup";
 import { StatusCodes } from "http-status-codes";
 
 import { validation } from "../../shared/middlewares";
-import { IUser } from "../../database/models";
-import { UsersProvider } from "../../database/providers/user";
+import { ITransaction } from "../../database/models";
+import { TransactionsProvider } from "../../database/providers/transaction";
 
 interface IParamsProps {
   id?: number;
 }
 
-interface IBodyProps extends Omit<IUser, "id"> {}
+interface IBodyProps extends Omit<ITransaction, "id"> {}
 
 export const updateByIdValidation = validation((getSchema) => ({
   params: getSchema<IParamsProps>(
@@ -20,9 +20,13 @@ export const updateByIdValidation = validation((getSchema) => ({
   ),
   body: getSchema<IBodyProps>(
     yup.object().shape({
-      name: yup.string().required().min(3),
-      age: yup.number().required().integer().min(18),
-      email: yup.string().required().email(),
+      userId: yup.number().required().moreThan(0),
+      type: yup.string().required(),
+      amount: yup.number().required().moreThan(0),
+      tag: yup.string().required(),
+      description: yup.string().required(),
+      note: yup.string().notRequired(),
+      date: yup.string().required(),
     })
   ),
 }));
@@ -34,11 +38,11 @@ export const updateById = async (
   if (!req.params.id) {
     return res.status(StatusCodes.NOT_FOUND).json({
       errors: {
-        default: "User not found.",
+        default: "Transaction not found.",
       },
     });
   }
-  const result = await UsersProvider.updateById(req.params.id, req.body);
+  const result = await TransactionsProvider.updateById(req.params.id, req.body);
 
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

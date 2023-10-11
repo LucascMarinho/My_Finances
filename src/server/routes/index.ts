@@ -27,29 +27,33 @@ router.put(
 );
 
 //TRANSACTIONS
-// router.get("/users", UserController.getAllValidation, UserController.getAll);
-// router.get(
-//   "/users/:id",
-//   UserController.getByIdValidation,
-//   UserController.getById
-// );
+router.get(
+  "/transactions",
+  TransactionController.getAllValidation,
+  TransactionController.getAll
+);
+router.get(
+  "/transactions/:id",
+  TransactionController.getByIdValidation,
+  TransactionController.getById
+);
 
 router.post(
-  "/transaction",
+  "/transactions",
   TransactionController.createValidation,
   TransactionController.create
 );
 
-// router.put(
-//   "/users/:id",
-//   UserController.updateByIdValidation,
-//   UserController.updateById
-// );
+router.put(
+  "/transactions/:id",
+  TransactionController.updateByIdValidation,
+  TransactionController.updateById
+);
 
-// router.put(
-//   "/users/disable-user/:id",
-//   UserController.deleteByIdValidation,
-//   UserController.deleteById
-// );
+router.put(
+  "/transactions/delete-transaction/:id",
+  TransactionController.deleteByIdValidation,
+  TransactionController.deleteById
+);
 
 export { router };
