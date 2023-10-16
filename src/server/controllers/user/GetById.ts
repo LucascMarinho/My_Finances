@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import * as yup from "yup";
 import { validation } from "../../shared/middlewares";
 import { StatusCodes } from "http-status-codes";
+import { UsersProvider } from "../../database/providers/user";
 
 interface IParamsProps {
   id?: number;
@@ -16,9 +17,22 @@ export const getByIdValidation = validation((getSchema) => ({
 }));
 
 export const getById = async (req: Request<IParamsProps>, res: Response) => {
-  console.log(req.params);
+  if (!req.params.id) {
+    return res.status(StatusCodes.NOT_FOUND).json({
+      errors: {
+        default: "Couldn't find 'id' parameter.",
+      },
+    });
+  }
 
-  return res
-    .status(StatusCodes.INTERNAL_SERVER_ERROR)
-    .send("Ainda não implementado.");
+  const result = await UsersProvider.getById(req.params.id);
+  if (result instanceof Error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      errors: {
+        default: result.message,
+      },
+    });
+  }
+
+  return res.status(StatusCodes.OK).json(result);
 };
