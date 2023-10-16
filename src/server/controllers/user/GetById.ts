@@ -3,6 +3,7 @@ import * as yup from "yup";
 import { validation } from "../../shared/middlewares";
 import { StatusCodes } from "http-status-codes";
 import { UsersProvider } from "../../database/providers/user";
+import { TransactionsProvider } from "../../database/providers/transaction";
 
 interface IParamsProps {
   id?: number;
@@ -25,14 +26,29 @@ export const getById = async (req: Request<IParamsProps>, res: Response) => {
     });
   }
 
-  const result = await UsersProvider.getById(req.params.id);
-  if (result instanceof Error) {
+  const userResult = await UsersProvider.getById(req.params.id);
+  const transactionResult = await TransactionsProvider.getByUserId(
+    req.params.id
+  );
+  if (userResult instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       errors: {
-        default: result.message,
+        default: userResult.message,
+      },
+    });
+  } else if (transactionResult instanceof Error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      errors: {
+        default: transactionResult.message,
       },
     });
   }
 
-  return res.status(StatusCodes.OK).json(result);
+  return res
+    .status(StatusCodes.OK)
+    .json(
+      transactionResult
+        ? { ...userResult, transactions: transactionResult }
+        : userResult
+    );
 };
